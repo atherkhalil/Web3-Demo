@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Web3 JS</title>
+    <style>
+      body{
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 25px;
+      }
+      #container{
+        margin: 0 0 0 700px;
+      }
+
+      #logDiv{
+        margin: 0 0 50px 30px;
+      }
+
+      #getDiv{
+        margin: 0 0 0 30px;
+      }
+
+      input[type=text], input[type=number] {
+        width: 20%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+        background-color: lightgrey;
+        color: white;
+      }
+
+      button{
+        background-color: #4c9bf5;
+        color: white;
+        padding: 14px 20px;
+        margin-left: -35px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        width: 30%;
+        font-size: 15px;
+      }
+
+      button:hover{
+        background-color: #146cd1;
+      }
+
+      h4{
+        margin-left: -20px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="container">
+      <img src="UoS.jpg" width="300px">
+      <div id="logDiv">
+        <h4>Log Production Data</h4>
+        <input id="watts" name="watts" type="number" required placeholder="Watts"/>
+        <br><br>
+        <input id="timestamp" name="timestamp" type="number" required placeholder="Timestamp"/>
+        <br><br>
+        <input id="source" name="source" type="text" required placeholder="Source"/>
+        <br><br>
+        <button id="log">Log Production</button>
+      </div>
+  
+      <div id="getDiv">
+        <h4>Get Production Data</h4>
+        <input id="time" name="time" type="number" required placeholder="Timestamp"/>
+        <br><br>
+        <button id="get">Get Production Data</button>
+        <p id="data">
+          <p id="watt"></p>
+          <p id="stamp"></p>
+          <p id="src"></p>
+        </p>
+      </div>
+
+    </div>
+
+    <script>
+      $("#log").click(function () {
+        let w = $("#watts").val();
+        let t = $("#timestamp").val()
+        let s = $("#source").val().toString()
+
+        var settings = {
+          "url": "/log",
+          "method": "POST",
+          "timeout": 0,
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": JSON.stringify({"watts":w,"timestamp":t,"source":s}),
+        };
+
+        $.ajax(settings).done(function (response) {
+          console.log(response);
+        });
+      });
+
+      $("#get").click(function () {
+        let time = $("#time").val();
+
+        $.ajax({
+          url: `/get/${time}`,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          type: "GET",
+          success: function (result) {
+            $("#watt").text("Watts: " + result.watts);
+            $("#stamp").text("Timestamp: " + result.date);
+            $("#src").text("Source: " + result.source);
+            // alert(result)
+            console.log(result);
+          },
+          error: function () {
+            console.log("error");
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
